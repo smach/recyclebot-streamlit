@@ -1,3 +1,4 @@
+# Note that I wrote an original Chainlit app for this task. Claude "translated" it to Streamlit so I could upload it to Posit Connect Cloud (which doesn't host Chainlit apps)
 from shiny import App, reactive, render, ui
 import os
 from typing import List
