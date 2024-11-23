@@ -31,39 +31,34 @@ if "messages" not in st.session_state:
     st.session_state.messages = []
 
 
-def format_message_with_sources(message_content, source_docs=None):
+def format_message_with_sources(message_content, source_docs=None, message_index=None):
     """Format message content with clickable source buttons"""
     # Split the message into content and sources
-    content_parts = message_content.split("SOURCES:", 1)
+    content_parts = message_content.split('SOURCES:', 1)
     main_content = content_parts[0].strip()
-
+    
     # Display main content
     st.markdown(main_content)
-
+    
     # If there are sources, display them with expandable source content
     if len(content_parts) > 1 and source_docs:
         st.markdown("**Sources:**")
-        sources = content_parts[1].strip().split(",")
-
+        sources = content_parts[1].strip().split(',')
+        
         # Create columns for source buttons
         cols = st.columns(len(sources))
-
+        
         # Display each source as a button in its own column
         for idx, (source, col) in enumerate(zip(sources, cols)):
             source = source.strip()
             with col:
-                if st.button(
-                    f"📄 {source}",
-                    key=f"source_{idx}_{st.session_state.get('button_counter', 0)}",
-                ):
+                # Create a unique key using message_index, source index, and button counter
+                button_key = f"source_{message_index}_{idx}_{st.session_state.get('button_counter', 0)}"
+                if st.button(f"📄 {source}", key=button_key):
                     # Find matching source document
                     matching_doc = next(
-                        (
-                            doc
-                            for doc in source_docs
-                            if doc.metadata["source"] == source
-                        ),
-                        None,
+                        (doc for doc in source_docs if doc.metadata['source'] == source),
+                        None
                     )
                     if matching_doc:
                         with st.expander(f"Content from {source}", expanded=True):
@@ -179,15 +174,12 @@ def show_chat_interface():
                     )
 
     # Display chat history
-    for message in st.session_state.messages:
+    for message_idx, message in enumerate(st.session_state.messages):
         with st.chat_message(message["role"]):
             if message["role"] == "assistant" and "source_documents" in message:
-                format_message_with_sources(
-                    message["content"], message["source_documents"]
-                )
+                format_message_with_sources(message["content"], message["source_documents"], message_idx)
             else:
                 st.markdown(message["content"])
-
 
 def show_faq():
     """Display the FAQ content"""
