@@ -1,7 +1,9 @@
-shiny
-python-dotenv
-langchain
-langchain-openai
-langchain-anthropic
+streamlit 
+langchain 
+langchain-anthropic 
+pinecone-client 
+python-dotenv 
+openai
+anthropic
 langchain-community
-pinecone-client
+tiktoken
